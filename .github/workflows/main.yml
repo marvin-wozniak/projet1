@@ -99,6 +99,6 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
           scp -r ./server $SERVER_USER@$SERVER_IP:/var/www
-          scp -r ./dist $SERVER_USER@USER_IP:/var/www/dist
+          scp -r ./dist $SERVER_USER@$USER_IP:/var/www/dist
           ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/home/ubuntu/.nvm/versions/node/v24.20.0/bin && cd /var/www && npm install --omit=dev"
           ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/home/ubuntu/.nvm/versions/node/v24.20.0/bin && cd /var/www && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
