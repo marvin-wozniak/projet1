@@ -9,14 +9,14 @@ on:
     branches: main
 
 jobs:
-  tests:
+  check-tests-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./server
     steps:
       - name: checkout le code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
       - name: installer node.js
         uses: actions/setup-node@v7
         with:
@@ -31,12 +31,66 @@ jobs:
       - name: éxécute les tests
         run: npm run test:ci
 
+  check-frontend:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: ./client
+      steps:
+        - name: checkout le code
+          uses: actions/checkout@v4
+        - name: installer node.js
+          uses: actions/setup-node@v4
+          with:
+            cache: "npm"
+            cache-dependency-path: ./client/package-lock.json
+        - name: install dependencies
+          run: npm ci --prefer-offline 
+        - name: vérifie le code
+          run: npm run lint
+        - name: vérifie les vulnérabilités des dépendances
+          run: npm audit --audit-level=critical
+
+  build-frontend:
+    needs: check-frontend
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: ./client
+    steps:
+        - name: checkout le code
+          uses: actions/checkout@v4
+        - name: installer node.js
+          uses: actions/setup-node@v4
+          with:
+            cache: "npm"
+            cache-dependency-path: ./client/package-lock.json
+        - name: install dependencies
+          run: npm ci --prefer-offline 
+        - name: build application frontend
+          run: npm run build
+        - name: upload build artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: build
+            path: ./client/dist
+
+ 
+   
+          
+
+
   deploy:
-    needs: tests
+    needs: [check-tests-backend,build-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: checkout le code 
         uses: actions/checkout@v4
+      - name: download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./dist
       - name: déployer le serveur 
         run: |
           set -x
@@ -45,5 +99,6 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
           scp -r ./server $SERVER_USER@$SERVER_IP:/var/www
+          scp -r ./dist $SERVER_USER@USER_IP:/var/www/dist
           ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/home/ubuntu/.nvm/versions/node/v24.20.0/bin && cd /var/www && npm install --omit=dev"
           ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/home/ubuntu/.nvm/versions/node/v24.20.0/bin && cd /var/www && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
