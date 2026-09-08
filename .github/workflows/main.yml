@@ -66,7 +66,7 @@ jobs:
             cache: "npm"
             cache-dependency-path: ./client/package-lock.json
         - name: install dependencies
-          run: npm ci --prefer-offline 
+          run: npm ci --prefer-offline --legacy-peer-deps
         - name: build application frontend
           run: npm run build
         - name: upload build artifact
