@@ -18,7 +18,7 @@ jobs:
       - name: checkout le code
         uses: actions/checkout@v4
       - name: installer node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           cache: "npm"
           cache-dependency-path: ./server/package-lock.json
@@ -91,7 +91,7 @@ jobs:
             cd server  
             npm ci --prefer-offline --legacy-peer-deps
         - name: download build artifact
-          uses: actions/upload-artifact@v6
+          uses: actions/download-artifact@v6
           with:
             name: build
             path: ./client/dist
