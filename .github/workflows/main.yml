@@ -70,7 +70,7 @@ jobs:
         - name: build application frontend
           run: npm run build
         - name: upload build artifact
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v6
           with:
             name: build
             path: ./client/dist
@@ -87,7 +87,7 @@ jobs:
       - name: checkout le code 
         uses: actions/checkout@v4
       - name: download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v6
         with:
           name: build
           path: ./dist
