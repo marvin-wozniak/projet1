@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@v4
       - name: déployer le serveur 
         run: |
+          set -x
           eval $(ssh-agent -s)
           ssh-add - <<< "${{ secrets.SSH_KEY_VPS }}"
           mkdir -p ~/.ssh
