@@ -23,7 +23,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: ./server/package-lock.json
       - name: install dependencies
-        run: npm ci --cache .npm --prefer-offline 
+        run: npm ci --prefer-offline 
       - name: vérifie le code
         run: npm run lint
       - name: vérifie les vulnérabilités des dépendances
