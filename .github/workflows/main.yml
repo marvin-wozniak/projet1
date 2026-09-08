@@ -2,7 +2,7 @@ name: CI/CD workflow
 
 env:
   SERVER_IP: "51.91.125.163"
-  SERVER_USER: ubuntu
+  SERVER_USER: root
 
 on:
   push:
@@ -45,5 +45,5 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
           scp -r ./server $SERVER_USER@$SERVER_IP:/var/www
-          ssh $SERVER_USER@$SERVER_IP "export NVM_DIR=\"\$HOME/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\" && cd /var/www && npm install --omit=dev"
-          ssh $SERVER_USER@$SERVER_IP "export NVM_DIR=\"\$HOME/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\" && cd /var/www && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
+          ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/usr/bin:/usr/local/bin && cd /var/www && npm install --omit=dev"
+          ssh $SERVER_USER@$SERVER_IP "export PATH=\$PATH:/usr/bin:/usr/local/bin && cd /var/www && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
